@@ -7,7 +7,7 @@ from statsmodels.formula.api import ols
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
 import seaborn as sns
-import openai
+from openai import OpenAI
 from fpdf import FPDF
 import tempfile
 from sklearn.preprocessing import LabelEncoder
