@@ -191,8 +191,6 @@ def aggregate_categorical(df, cat_col, val_col, agg_func, sort_order):
     return agg_df, fig
 
 # --- GPT Explain ---
-client = OpenAI()  # API key otomatis dibaca dari os.environ["OPENAI_API_KEY"]
-
 def explain(text, question=None):
     if not st.session_state.openai_key:
         return "No API key."
