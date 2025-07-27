@@ -201,7 +201,7 @@ def explain(text, question=None):
         prompt += f"\nAnswer this question: {question}"
 
     response = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-4o-mini",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.4,
     )
