@@ -195,18 +195,14 @@ def explain(text, question=None):
     if not st.session_state.openai_key:
         return "No API key."
 
-    import os
-    os.environ["OPENAI_API_KEY"] = st.session_state.openai_key
+    client = OpenAI(api_key=st.session_state.openai_key)
 
-    # Buat client setelah API key sudah ada
-    client = OpenAI()
-
-    # Pastikan text berupa string (DataFrame, Summary, dll jadi string)
+    # Convert all results to string (avoid error for DataFrame or Summary)
     if not isinstance(text, str):
         try:
-            text = text.to_string()  # kalau DataFrame
+            text = text.to_string()
         except:
-            text = str(text)  # fallback untuk object lain
+            text = str(text)
 
     prompt = f"Explain this statistical result for a non-technical audience:\n{text}"
     if question:
