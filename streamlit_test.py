@@ -192,17 +192,21 @@ def aggregate_categorical(df, cat_col, val_col, agg_func, sort_order):
 
 # --- GPT Explain ---
 def explain(text, question=None):
-    if not openai_key: return "No API key."
-    openai.api_key = openai_key
-    prompt = f"Jelaskan hasil statistik ini untuk tim non-teknis:\n{text}"
+    if not openai_key:
+        return "No API key."
+    client = OpenAI(api_key=openai_key)
+
+    prompt = f"Explain this statistical result for a non-technical team:\n{text}"
     if question:
-        prompt += f"\nJawab pertanyaan: {question}"
-    res = openai.ChatCompletion.create(
+        prompt += f"\nAnswer this question: {question}"
+
+    response = client.chat.completions.create(
         model="gpt-4",
-        messages=[{"role":"user","content":prompt}],
-        temperature=0.4
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.4,
     )
-    return res.choices[0].message.content
+
+    return response.choices[0].message.content
 
 # --- PDF Export ---
 def export_pdf(results_dict):
