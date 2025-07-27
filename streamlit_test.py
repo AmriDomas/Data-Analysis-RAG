@@ -7,16 +7,10 @@ from statsmodels.formula.api import ols
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
 import seaborn as sns
-import os
 from openai import OpenAI
 from fpdf import FPDF
 import tempfile
 from sklearn.preprocessing import LabelEncoder
-
-if 'openai_key' in st.session_state and st.session_state.openai_key:
-    os.environ["OPENAI_API_KEY"] = st.session_state.openai_key
-
-client = OpenAI()
 
 st.set_page_config(page_title="Data Analysis RAG", layout="wide")
 
@@ -197,9 +191,14 @@ def aggregate_categorical(df, cat_col, val_col, agg_func, sort_order):
     return agg_df, fig
 
 # --- GPT Explain ---
+client = OpenAI()  # API key otomatis dibaca dari os.environ["OPENAI_API_KEY"]
+
 def explain(text, question=None):
     if not st.session_state.openai_key:
         return "No API key."
+    
+    import os
+    os.environ["OPENAI_API_KEY"] = st.session_state.openai_key
     
     prompt = f"Explain this statistical result for a non-technical audience:\n{text}"
     if question:
