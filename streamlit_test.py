@@ -194,14 +194,24 @@ def aggregate_categorical(df, cat_col, val_col, agg_func, sort_order):
 def explain(text, question=None):
     if not st.session_state.openai_key:
         return "No API key."
-    
+
     import os
     os.environ["OPENAI_API_KEY"] = st.session_state.openai_key
-    
+
+    # Buat client setelah API key sudah ada
+    client = OpenAI()
+
+    # Pastikan text berupa string (DataFrame, Summary, dll jadi string)
+    if not isinstance(text, str):
+        try:
+            text = text.to_string()  # kalau DataFrame
+        except:
+            text = str(text)  # fallback untuk object lain
+
     prompt = f"Explain this statistical result for a non-technical audience:\n{text}"
     if question:
         prompt += f"\nAnswer this specific question: {question}"
-    
+
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[{"role": "user", "content": prompt}],
