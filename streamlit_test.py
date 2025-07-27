@@ -7,10 +7,16 @@ from statsmodels.formula.api import ols
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 from openai import OpenAI
 from fpdf import FPDF
 import tempfile
 from sklearn.preprocessing import LabelEncoder
+
+if 'openai_key' in st.session_state and st.session_state.openai_key:
+    os.environ["OPENAI_API_KEY"] = st.session_state.openai_key
+
+client = OpenAI()
 
 st.set_page_config(page_title="Data Analysis RAG", layout="wide")
 
@@ -192,20 +198,18 @@ def aggregate_categorical(df, cat_col, val_col, agg_func, sort_order):
 
 # --- GPT Explain ---
 def explain(text, question=None):
-    if not openai_key:
+    if not st.session_state.openai_key:
         return "No API key."
-    client = OpenAI(api_key=openai_key)
-
-    prompt = f"Explain this statistical result for a non-technical team:\n{text}"
+    
+    prompt = f"Explain this statistical result for a non-technical audience:\n{text}"
     if question:
-        prompt += f"\nAnswer this question: {question}"
-
+        prompt += f"\nAnswer this specific question: {question}"
+    
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[{"role": "user", "content": prompt}],
-        temperature=0.4,
+        temperature=0.4
     )
-
     return response.choices[0].message.content
 
 # --- PDF Export ---
