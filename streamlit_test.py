@@ -195,14 +195,14 @@ def explain(text, question=None):
     if not st.session_state.openai_key:
         return "No API key."
 
+    # Always re-init client with active key
     client = OpenAI(api_key=st.session_state.openai_key)
 
-    # Convert all results to string (avoid error for DataFrame or Summary)
-    if not isinstance(text, str):
-        try:
-            text = text.to_string()
-        except:
-            text = str(text)
+    # Force text to string (avoid TypeError)
+    try:
+        text = text.to_string() if hasattr(text, "to_string") else str(text)
+    except:
+        text = str(text)
 
     prompt = f"Explain this statistical result for a non-technical audience:\n{text}"
     if question:
@@ -214,6 +214,7 @@ def explain(text, question=None):
         temperature=0.4
     )
     return response.choices[0].message.content
+
 
 # --- PDF Export ---
 def export_pdf(results_dict):
